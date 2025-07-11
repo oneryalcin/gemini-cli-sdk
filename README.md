@@ -1,6 +1,6 @@
 # Gemini CLI SDK for Python
 
-> ⚠️ **EXPERIMENTAL**: This SDK is in early development and uses LLM-based parsing as a temporary solution. The API may change as Gemini CLI evolves.
+> ⚠️ **EXPERIMENTAL**: This SDK is in early development and uses Gemini's structured output for parsing. The API may change as Gemini CLI evolves.
 
 Python SDK for [Gemini CLI](https://github.com/google-gemini/gemini-cli), providing programmatic access to Gemini with an API compatible with [Claude Code SDK](https://github.com/anthropics/claude-code-sdk-python).
 
@@ -13,7 +13,7 @@ pip install gemini-cli-sdk
 **Prerequisites:**
 - Python 3.10+
 - Gemini CLI installed: `npm install -g @google/gemini-cli`
-- OpenAI API key (for LLM-based parsing)
+- Gemini API key (for both CLI and parsing)
 
 ## Quick Start
 
@@ -73,13 +73,13 @@ See [MIGRATION.md](MIGRATION.md) for detailed migration guide.
 
 ## Current Limitations
 
-As Gemini CLI doesn't yet support structured JSON output, this SDK uses LLM-based parsing:
+As Gemini CLI doesn't yet support structured JSON output, this SDK uses Gemini's structured output for parsing:
 
 - ✅ Structured message types (compatible with Claude SDK)
 - ✅ Async iteration pattern
 - ✅ Basic error handling
-- ⚠️ Additional latency from parsing (~100-500ms)
-- ⚠️ Requires OpenAI API key for parsing
+- ⚠️ Additional latency from parsing (~50-200ms)
+- ⚠️ Uses same Gemini API key for both CLI and parsing
 - ❌ Tool use blocks (not yet supported)
 - ❌ Session management (not exposed by Gemini CLI)
 - ❌ Cost tracking (no data available)
@@ -87,8 +87,8 @@ As Gemini CLI doesn't yet support structured JSON output, this SDK uses LLM-base
 ## Environment Variables
 
 - `GEMINI_API_KEY` or `GOOGLE_API_KEY`: Your Gemini API key
-- `OPENAI_API_KEY`: Required for LLM-based parsing
-- `GEMINI_PARSER_MODEL`: LLM model for parsing (default: `gpt-4o-mini`)
+- `GEMINI_MODEL`: Default model for CLI (default: `gemini-2.0-flash`)
+- `GEMINI_PARSER_MODEL`: Model for parsing output (default: `gemini-2.5-flash-lite-preview-06-17`)
 
 ## Examples
 

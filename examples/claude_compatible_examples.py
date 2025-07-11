@@ -149,14 +149,12 @@ async def main():
     print()
 
     # Check environment
-    if not os.getenv("OPENAI_API_KEY"):
-        print("⚠️  Warning: OPENAI_API_KEY not set")
-        print("   Required for LLM-based parsing")
-        return
-
     if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
         print("⚠️  Warning: GEMINI_API_KEY not set")
+        print("   Set your Gemini API key:")
+        print("   export GEMINI_API_KEY='your-key-here'")
         return
+
 
     # Run examples
     await basic_example()

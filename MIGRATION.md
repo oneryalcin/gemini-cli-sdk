@@ -38,7 +38,6 @@ export ANTHROPIC_API_KEY="your-key"
 
 # Gemini SDK uses:
 export GEMINI_API_KEY="your-key"  # or GOOGLE_API_KEY
-export OPENAI_API_KEY="your-key"  # Required for LLM parsing
 ```
 
 ## API Compatibility
@@ -143,13 +142,13 @@ options = GeminiOptions(
 
 ## Performance Considerations
 
-### LLM-Based Parsing
+### Structured Output Parsing
 
-The Gemini SDK currently uses LLM-based parsing (via OpenAI) because Gemini CLI doesn't support JSON output:
+The Gemini SDK uses Gemini's native structured output capability because Gemini CLI doesn't support JSON output:
 
-- **Latency**: Adds 100-500ms per response
-- **Cost**: ~$0.0001-0.001 per parse (using GPT-4o-mini)
-- **Reliability**: More robust than regex parsing
+- **Latency**: Adds 50-200ms per response
+- **Cost**: Minimal (using gemini-2.5-flash-lite)
+- **Reliability**: Native Gemini structured output ensures consistency
 
 When Gemini CLI adds JSON support, the SDK will automatically switch without code changes.
 

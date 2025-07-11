@@ -150,4 +150,4 @@ uv.lock
 .DS_Store
 
 # Testing
-.ruff_cache/
+.ruff_cache/trash/
