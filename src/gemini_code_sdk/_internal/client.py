@@ -71,7 +71,7 @@ class InternalClient:
             yield SystemMessage(
                 subtype="init",
                 data={
-                    "model": options.model or "gemini-2.5-pro",
+                    "model": options.model or os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
                     "cwd": str(options.cwd) if options.cwd else os.getcwd(),
                     "parser": type(self.parser).__name__,
                     "sandbox": options.sandbox,
@@ -94,6 +94,15 @@ class InternalClient:
                 
         except Exception as e:
             logger.error(f"Query processing failed: {e}")
+            # Emit error message before re-raising
+            yield ResultMessage(
+                subtype="error_during_execution",
+                duration_ms=0,
+                is_error=True,
+                session_id="error",
+                num_turns=0,
+                result=str(e)
+            )
             raise
         finally:
             # Ensure transport is disconnected
