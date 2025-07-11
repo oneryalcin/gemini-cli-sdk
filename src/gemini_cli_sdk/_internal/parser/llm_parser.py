@@ -39,13 +39,13 @@ class ParsedResponse(BaseModel):
     contents: list[ParsedContent] = Field(description="List of content blocks in order")
     has_code: bool = Field(description="Whether the response contains code blocks")
     has_error: bool = Field(description="Whether the response indicates an error")
-    summary: str = Field(description="Brief summary of the response", max_length=100)
+    summary: str = Field(description="Brief summary of the response", max_length=500)
 
 
 class LLMParser(ParserStrategy):
     """Parser that uses Gemini to extract structured data from plain text."""
 
-    def __init__(self, model: str = "gemini-2.5-flash-lite-preview-06-17"):
+    def __init__(self, model: str = "gemini-2.0-flash"):
         """
         Initialize LLM parser using Gemini.
 
@@ -103,9 +103,22 @@ class LLMParser(ParserStrategy):
         try:
             # Use Gemini to parse the output
             parsed = await self._parse_with_llm(cleaned_output, stderr)
+            
+            # Debug logging
+            logger.debug(f"Parsed response type: {type(parsed)}")
+            logger.debug(f"Parsed response: {parsed}")
 
             # Convert parsed response to SDK messages
             content_blocks: list[ContentBlock] = []
+
+            # Check if parsed is None or doesn't have contents
+            if parsed is None:
+                logger.error("Parsed response is None")
+                raise ValueError("LLM returned None response")
+            
+            if not hasattr(parsed, 'contents'):
+                logger.error(f"Parsed response has no 'contents' attribute: {parsed}")
+                raise ValueError("LLM response missing 'contents' attribute")
 
             for item in parsed.contents:
                 if item.type == "text":
@@ -152,6 +165,10 @@ class LLMParser(ParserStrategy):
 
     async def _parse_with_llm(self, output: str, stderr: str) -> ParsedResponse:
         """Use Gemini to parse the output into structured format."""
+        
+        logger.debug(f"Parsing output of length {len(output)}")
+        if stderr:
+            logger.debug(f"Stderr present: {len(stderr)} chars")
 
         system_prompt = """You are a parser for Gemini CLI output.
         Extract structured information from the CLI output.
@@ -169,6 +186,7 @@ class LLMParser(ParserStrategy):
             prompt += f"\n\nStderr output:\n{stderr}"
 
         try:
+            logger.debug(f"Calling Gemini API with model: {self.model}")
             response = await self.client.aio.models.generate_content(
                 model=self.model,
                 contents=prompt,
@@ -178,8 +196,28 @@ class LLMParser(ParserStrategy):
                 )
             )
             
-            # response.parsed already returns the parsed Pydantic object
-            return response.parsed
+            logger.debug(f"Got response: {response}")
+            logger.debug(f"Response.parsed type: {type(response.parsed) if hasattr(response, 'parsed') else 'No parsed attr'}")
+            
+            # Check if parsed is available
+            if response.parsed is not None:
+                logger.debug("Using response.parsed")
+                return response.parsed
+            
+            # Fallback: Try to parse JSON from text response
+            if response.candidates and response.candidates[0].content.parts:
+                text_content = response.candidates[0].content.parts[0].text
+                logger.debug(f"Parsing JSON from text response: {text_content[:200]}...")
+                
+                import json
+                try:
+                    parsed_dict = json.loads(text_content)
+                    return ParsedResponse(**parsed_dict)
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON from text: {e}")
+                    raise
+            
+            raise ValueError("No valid response from Gemini API")
             
         except Exception as e:
             raise ParsingError(
