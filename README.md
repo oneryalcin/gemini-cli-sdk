@@ -130,28 +130,22 @@ The SDK is designed to seamlessly adopt these features without breaking changes 
 
 ## Examples
 
-### Basic Query
+See the `examples/` directory for complete examples:
+
+- **`quick_start.py`** - Comprehensive introduction with all features
+- **`claude_quickstart_on_gemini.py`** - Claude SDK code running unchanged
+- **`import_switching_demo.py`** - Migration guide from Claude SDK
+
+### Basic Usage
 
 ```python
-from gemini_cli_sdk import query, GeminiOptions, AssistantMessage, TextBlock
+from gemini_cli_sdk import query, AssistantMessage, TextBlock
 
 async for message in query(prompt="Hello Gemini"):
     if isinstance(message, AssistantMessage):
         for block in message.content:
             if isinstance(block, TextBlock):
                 print(block.text)
-```
-
-### With Options
-
-```python
-options = GeminiOptions(
-    model="gemini-2.0-flash",
-    system_prompt="You are a helpful assistant"
-)
-
-async for message in query(prompt="Explain Python", options=options):
-    print(message)
 ```
 
 ## How It Works

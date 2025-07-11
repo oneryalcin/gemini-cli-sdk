@@ -1,112 +1,66 @@
 #!/usr/bin/env python3
 """
-Demonstrate import switching between Claude SDK and Gemini SDK.
-This shows how users can easily migrate with minimal changes.
+Migration guide: How to switch from Claude SDK to Gemini SDK.
 """
-
-import os
 
 import anyio
 
-
-async def run_with_sdk(sdk_name: str):
-    """Run the same code with different SDK imports."""
-    print(f"\n{'=' * 50}")
-    print(f"Running with {sdk_name}")
-    print("=" * 50)
-
-    try:
-        if sdk_name == "Claude SDK":
-            # Import from Claude SDK
-            from claude_code_sdk import (
-                AssistantMessage,
-                TextBlock,
-                query,
-            )
-            from claude_code_sdk import (
-                ClaudeCodeOptions as Options,
-            )
-        else:
-            # Import from Gemini SDK (with compatibility aliases)
-            from gemini_cli_sdk import (
-                AssistantMessage,
-                TextBlock,
-                query,
-            )
-            from gemini_cli_sdk import (
-                ClaudeCodeOptions as Options,  # Using Claude alias!
-            )
-
-        # This code is EXACTLY THE SAME for both SDKs
-        options = Options(
-            system_prompt="You are a helpful assistant",
-            max_turns=1,
-        )
-
-        response_text = []
-        async for message in query(
-            prompt="What is the Python GIL in one sentence?", options=options
-        ):
-            if isinstance(message, AssistantMessage):
-                for block in message.content:
-                    if isinstance(block, TextBlock):
-                        response_text.append(block.text)
-
-        if response_text:
-            print(f"✅ Response: {' '.join(response_text)}")
-        else:
-            print("❌ No response received")
-
-    except ImportError as e:
-        print(f"❌ Import error: {e}")
-    except Exception as e:
-        print(f"❌ Error: {type(e).__name__}: {e}")
+# Try to use rich for better output
+try:
+    from rich import print
+    from rich.syntax import Syntax
+except ImportError:
+    pass
 
 
 async def main():
-    """Main demo function."""
-    print("IMPORT SWITCHING DEMO")
-    print("=" * 70)
-    print("The EXACT SAME code works with both Claude SDK and Gemini SDK")
-    print("Only the import statements need to change (or use aliases!)")
-
-    # Check environment
-    has_anthropic = os.getenv("ANTHROPIC_API_KEY") is not None
-    has_gemini = os.getenv("GEMINI_API_KEY") is not None
-    print("\nEnvironment:")
-    print(f"- ANTHROPIC_API_KEY: {'✓' if has_anthropic else '✗'}")
-    print(f"- GEMINI_API_KEY: {'✓' if has_gemini else '✗'}")
-
-    # Try with Claude SDK (will fail without Claude CLI)
-    if has_anthropic:
-        await run_with_sdk("Claude SDK")
-    else:
-        print("\n⚠️  Skipping Claude SDK (ANTHROPIC_API_KEY not set)")
-
-    # Try with Gemini SDK
-    if has_gemini:
-        await run_with_sdk("Gemini SDK")
-    else:
-        print("\n⚠️  Skipping Gemini SDK (requires GEMINI_API_KEY)")
-
-    print("\n" + "=" * 70)
-    print("MIGRATION SUMMARY")
-    print("=" * 70)
-    print("""
-To migrate from Claude SDK to Gemini SDK:
-
-Option 1 - Update imports:
-    # Before
-    from claude_code_sdk import query, ClaudeCodeOptions
+    print("\n[bold]Migration from Claude SDK to Gemini SDK[/bold]\n" if "rich" in globals() else "\nMigration from Claude SDK to Gemini SDK\n")
     
-    # After
-    from gemini_cli_sdk import query, GeminiOptions
+    # Option 1: Update imports
+    code1 = """# Before (Claude SDK)
+from claude_code_sdk import query, ClaudeCodeOptions
 
-Option 2 - Use compatibility aliases (no code changes!):
-    from gemini_cli_sdk import query, ClaudeCodeOptions
+# After (Gemini SDK)  
+from gemini_cli_sdk import query, GeminiOptions"""
     
-That's it! Your existing code continues to work!
-""")
+    if "rich" in globals():
+        print(Syntax(code1, "python", theme="monokai"))
+    else:
+        print(code1)
+    
+    print("\n[bold]Option 2: Use compatibility aliases (zero code changes)[/bold]\n" if "rich" in globals() else "\nOption 2: Use compatibility aliases (zero code changes)\n")
+    
+    # Option 2: Use aliases
+    code2 = """# This Claude SDK code works unchanged with Gemini SDK
+from gemini_cli_sdk import query, ClaudeCodeOptions  # Just change the module name!
+
+# Your existing code continues to work
+options = ClaudeCodeOptions(
+    system_prompt="You are helpful",
+    max_turns=1
+)
+
+async for message in query(prompt="Hello", options=options):
+    # ... process messages ..."""
+    
+    if "rich" in globals():
+        print(Syntax(code2, "python", theme="monokai"))
+    else:
+        print(code2)
+    
+    # Live demo
+    print("\n[bold]Live Demo[/bold]\n" if "rich" in globals() else "\nLive Demo\n")
+    
+    from gemini_cli_sdk import query, ClaudeCodeOptions, AssistantMessage, TextBlock
+    
+    # This is Claude SDK code but runs on Gemini
+    options = ClaudeCodeOptions(max_turns=1)
+    
+    async for message in query(prompt="Say 'Migration successful!'", options=options):
+        if isinstance(message, AssistantMessage):
+            for block in message.content:
+                if isinstance(block, TextBlock):
+                    print(f"Result: {block.text}")
 
 
 if __name__ == "__main__":
