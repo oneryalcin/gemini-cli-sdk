@@ -71,7 +71,7 @@ class InternalClient:
             yield SystemMessage(
                 subtype="init",
                 data={
-                    "model": options.model or "gemini-2.5-pro",
+                    "model": options.model or os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
                     "cwd": str(options.cwd) if options.cwd else os.getcwd(),
                     "parser": type(self.parser).__name__,
                     "sandbox": options.sandbox,
