@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Quick start example for Gemini CLI SDK."""
 
-import anyio
 import os
+
+import anyio
 
 from gemini_cli_sdk import (
     AssistantMessage,
+    CodeBlock,
     GeminiOptions,
     ResultMessage,
     TextBlock,
-    CodeBlock,
     query,
 )
 
@@ -67,7 +68,7 @@ async def code_generation_example():
                     print()
         elif isinstance(message, ResultMessage):
             if not message.is_error:
-                print(f"✓ Completed successfully")
+                print("✓ Completed successfully")
     print()
 
 
@@ -76,22 +77,24 @@ async def migration_example():
     print("=== Migration Example ===")
     print("This code works with both Claude Code SDK and Gemini CLI SDK:")
     print()
-    
+
     # This import style works for both SDKs
     try:
         # For Claude SDK
-        from claude_code_sdk import query, ClaudeCodeOptions as Options
+        from claude_code_sdk import ClaudeCodeOptions as Options
+        from claude_code_sdk import query
     except ImportError:
         # For Gemini SDK
-        from gemini_cli_sdk import query, GeminiOptions as Options
-    
+        from gemini_cli_sdk import GeminiOptions as Options
+        from gemini_cli_sdk import query
+
     options = Options(
         system_prompt="You are a helpful coding assistant",
     )
-    
+
     async for message in query(
         prompt="What's the difference between a list and tuple in Python?",
-        options=options
+        options=options,
     ):
         if isinstance(message, AssistantMessage):
             for block in message.content:
@@ -105,7 +108,7 @@ async def main():
     print("Gemini CLI SDK - Quick Start Examples")
     print("=" * 40)
     print()
-    
+
     # Check for required environment variables
     if not os.getenv("OPENAI_API_KEY"):
         print("⚠️  Warning: OPENAI_API_KEY not set.")
@@ -114,14 +117,14 @@ async def main():
         print("   export OPENAI_API_KEY='your-key-here'")
         print()
         return
-    
+
     if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
         print("⚠️  Warning: GEMINI_API_KEY or GOOGLE_API_KEY not set.")
         print("   Set your Gemini API key:")
         print("   export GEMINI_API_KEY='your-key-here'")
         print()
         return
-    
+
     await basic_example()
     await with_options_example()
     await code_generation_example()

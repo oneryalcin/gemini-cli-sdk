@@ -2,9 +2,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal, TypedDict, Optional, List, Union
-
-from typing_extensions import NotRequired  # For Python < 3.11 compatibility
+from typing import Any, Literal, Union
 
 # Permission modes (matching Claude SDK)
 PermissionMode = Literal["default", "acceptEdits", "bypassPermissions"]
@@ -14,6 +12,7 @@ PermissionMode = Literal["default", "acceptEdits", "bypassPermissions"]
 @dataclass
 class TextBlock:
     """Text content block."""
+
     text: str
     type: Literal["text"] = "text"
 
@@ -21,6 +20,7 @@ class TextBlock:
 @dataclass
 class CodeBlock:
     """Code content block with language."""
+
     code: str
     language: str = "plaintext"
     type: Literal["code"] = "code"
@@ -30,6 +30,7 @@ class CodeBlock:
 @dataclass
 class ToolUseBlock:
     """Tool use content block (placeholder for future)."""
+
     id: str
     name: str
     input: dict[str, Any]
@@ -39,6 +40,7 @@ class ToolUseBlock:
 @dataclass
 class ToolResultBlock:
     """Tool result content block (placeholder for future)."""
+
     tool_use_id: str
     content: str | list[dict[str, Any]] | None = None
     is_error: bool | None = None
@@ -53,6 +55,7 @@ ContentBlock = Union[TextBlock, CodeBlock, ToolUseBlock, ToolResultBlock]
 @dataclass
 class UserMessage:
     """User message."""
+
     content: str
     type: Literal["user"] = "user"
 
@@ -60,13 +63,15 @@ class UserMessage:
 @dataclass
 class AssistantMessage:
     """Assistant message with content blocks."""
-    content: List[ContentBlock]
+
+    content: list[ContentBlock]
     type: Literal["assistant"] = "assistant"
 
 
 @dataclass
 class SystemMessage:
     """System message with metadata."""
+
     subtype: str
     data: dict[str, Any]
     type: Literal["system"] = "system"
@@ -75,14 +80,15 @@ class SystemMessage:
 @dataclass
 class ResultMessage:
     """Result message with execution information."""
+
     subtype: str
     duration_ms: int
     is_error: bool
     session_id: str
     num_turns: int = 1
-    total_cost_usd: Optional[float] = None
-    usage: Optional[dict[str, Any]] = None
-    result: Optional[str] = None
+    total_cost_usd: float | None = None
+    usage: dict[str, Any] | None = None
+    result: str | None = None
     type: Literal["result"] = "result"
     # Note: duration_api_ms not available from Gemini CLI
 
@@ -94,41 +100,41 @@ Message = Union[UserMessage, AssistantMessage, SystemMessage, ResultMessage]
 @dataclass
 class GeminiOptions:
     """Query options for Gemini SDK (compatible with ClaudeCodeOptions)."""
-    
+
     # Core options
-    model: Optional[str] = None
-    system_prompt: Optional[str] = None
-    append_system_prompt: Optional[str] = None
-    
+    model: str | None = None
+    system_prompt: str | None = None
+    append_system_prompt: str | None = None
+
     # Gemini-specific options
     sandbox: bool = False
-    sandbox_image: Optional[str] = None
+    sandbox_image: str | None = None
     debug: bool = False
     all_files: bool = False
     yolo: bool = False  # Auto-accept all actions
     checkpointing: bool = False
-    extensions: Optional[List[str]] = None
-    
+    extensions: list[str] | None = None
+
     # Claude compatibility options (some not implemented yet)
-    allowed_tools: List[str] = field(default_factory=list)
-    disallowed_tools: List[str] = field(default_factory=list)
-    permission_mode: Optional[PermissionMode] = None
-    max_turns: Optional[int] = None
+    allowed_tools: list[str] = field(default_factory=list)
+    disallowed_tools: list[str] = field(default_factory=list)
+    permission_mode: PermissionMode | None = None
+    max_turns: int | None = None
     max_thinking_tokens: int = 8000  # Not used by Gemini
-    
+
     # Session management (future)
     continue_conversation: bool = False
-    resume: Optional[str] = None
-    
+    resume: str | None = None
+
     # MCP support (future)
     mcp_servers: dict[str, Any] = field(default_factory=dict)
-    allowed_mcp_server_names: Optional[List[str]] = None
-    
+    allowed_mcp_server_names: list[str] | None = None
+
     # Working directory
-    cwd: Union[str, Path, None] = None
-    
+    cwd: str | Path | None = None
+
     # Permission prompt tool (future)
-    permission_prompt_tool_name: Optional[str] = None
+    permission_prompt_tool_name: str | None = None
 
 
 # Compatibility alias for migration from Claude SDK

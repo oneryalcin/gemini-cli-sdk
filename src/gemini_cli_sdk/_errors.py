@@ -3,11 +3,13 @@
 
 class GeminiSDKError(Exception):
     """Base exception for all Gemini SDK errors."""
+
     pass
 
 
 class CLIConnectionError(GeminiSDKError):
     """Raised when unable to connect to Gemini CLI."""
+
     pass
 
 
@@ -50,27 +52,27 @@ class CLIJSONDecodeError(GeminiSDKError):
 
 class ParsingError(GeminiSDKError):
     """Raised when LLM-based parsing fails."""
-    
+
     def __init__(
-        self, 
-        message: str = "Failed to parse Gemini output", 
+        self,
+        message: str = "Failed to parse Gemini output",
         raw_output: str | None = None,
-        original_error: Exception | None = None
+        original_error: Exception | None = None,
     ):
         self.raw_output = raw_output
         self.original_error = original_error
-        
+
         if original_error:
             message = f"{message}: {str(original_error)}"
         if raw_output and len(raw_output) < 200:
             message = f"{message}\nRaw output: {raw_output}"
-        
+
         super().__init__(message)
 
 
 class ConfigurationError(GeminiSDKError):
     """Raised when SDK is misconfigured."""
-    
+
     def __init__(self, message: str, missing_key: str | None = None):
         self.missing_key = missing_key
         if missing_key:

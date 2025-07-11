@@ -20,14 +20,14 @@ class Transport(ABC):
         pass
 
     @abstractmethod
-    async def execute(self, prompt: str, options: GeminiOptions) -> Tuple[str, str]:
+    async def execute(self, prompt: str, options: GeminiOptions) -> tuple[str, str]:
         """
         Execute a prompt and return output.
-        
+
         Args:
             prompt: The prompt to send to Gemini
             options: Configuration options
-            
+
         Returns:
             Tuple of (stdout, stderr)
         """
