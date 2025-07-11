@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Quick start example for Gemini Code SDK."""
+"""Quick start example for Gemini CLI SDK."""
 
 import anyio
 import os
 
-from gemini_code_sdk import (
+from gemini_cli_sdk import (
     AssistantMessage,
     GeminiOptions,
     ResultMessage,
@@ -74,7 +74,7 @@ async def code_generation_example():
 async def migration_example():
     """Example showing migration from Claude Code SDK."""
     print("=== Migration Example ===")
-    print("This code works with both Claude Code SDK and Gemini Code SDK:")
+    print("This code works with both Claude Code SDK and Gemini CLI SDK:")
     print()
     
     # This import style works for both SDKs
@@ -83,7 +83,7 @@ async def migration_example():
         from claude_code_sdk import query, ClaudeCodeOptions as Options
     except ImportError:
         # For Gemini SDK
-        from gemini_code_sdk import query, GeminiOptions as Options
+        from gemini_cli_sdk import query, GeminiOptions as Options
     
     options = Options(
         system_prompt="You are a helpful coding assistant",
@@ -102,7 +102,7 @@ async def migration_example():
 
 async def main():
     """Run all examples."""
-    print("Gemini Code SDK - Quick Start Examples")
+    print("Gemini CLI SDK - Quick Start Examples")
     print("=" * 40)
     print()
     

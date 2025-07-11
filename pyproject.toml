@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "gemini-code-sdk"
+name = "gemini-cli-sdk"
 version = "0.1.0"
 description = "Python SDK for Gemini CLI - Experimental"
 readme = "README.md"
@@ -43,12 +43,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/gemini-code-sdk/gemini-code-sdk-python"
-Documentation = "https://github.com/gemini-code-sdk/gemini-code-sdk-python"
-Issues = "https://github.com/gemini-code-sdk/gemini-code-sdk-python/issues"
+Homepage = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python"
+Documentation = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python"
+Issues = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/gemini_code_sdk"]
+packages = ["src/gemini_cli_sdk"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -106,4 +106,4 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["gemini_code_sdk"]
+known-first-party = ["gemini_cli_sdk"]

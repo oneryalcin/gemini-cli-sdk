@@ -1,17 +1,17 @@
-# Migration Guide: Claude Code SDK → Gemini Code SDK
+# Migration Guide: Claude Code SDK → Gemini CLI SDK
 
-This guide helps you migrate from Claude Code SDK to Gemini Code SDK with minimal code changes.
+This guide helps you migrate from Claude Code SDK to Gemini CLI SDK with minimal code changes.
 
 ## Quick Migration
 
-### 1. Install Gemini Code SDK
+### 1. Install Gemini CLI SDK
 
 ```bash
 # Remove Claude SDK
 pip uninstall claude-code-sdk
 
 # Install Gemini SDK
-pip install gemini-code-sdk
+pip install gemini-cli-sdk
 ```
 
 ### 2. Update Imports
@@ -24,10 +24,10 @@ The Gemini SDK provides compatibility aliases for easy migration:
 from claude_code_sdk import query, ClaudeCodeOptions
 
 # After
-from gemini_code_sdk import query, GeminiOptions
+from gemini_cli_sdk import query, GeminiOptions
 
 # Option 2: Use compatibility aliases (minimal changes)
-from gemini_code_sdk import query, ClaudeCodeOptions  # Works!
+from gemini_cli_sdk import query, ClaudeCodeOptions  # Works!
 ```
 
 ### 3. Update Environment Variables
@@ -107,7 +107,7 @@ options = GeminiOptions(
 ### Error Handling (Compatible)
 
 ```python
-from gemini_code_sdk import (
+from gemini_cli_sdk import (
     CLINotFoundError,
     ProcessError,
     ClaudeSDKError  # Alias works!
@@ -161,7 +161,7 @@ When Gemini CLI adds JSON support, the SDK will automatically switch without cod
 
 ## Migration Checklist
 
-- [ ] Install `gemini-code-sdk`
+- [ ] Install `gemini-cli-sdk`
 - [ ] Update imports (use find/replace)
 - [ ] Set environment variables (`GEMINI_API_KEY`, `OPENAI_API_KEY`)
 - [ ] Update model names in options
@@ -171,7 +171,7 @@ When Gemini CLI adds JSON support, the SDK will automatically switch without cod
 
 ## Getting Help
 
-- **Issues**: [GitHub Issues](https://github.com/gemini-code-sdk/gemini-code-sdk-python/issues)
+- **Issues**: [GitHub Issues](https://github.com/gemini-cli-sdk/gemini-cli-sdk-python/issues)
 - **Gemini CLI**: [Official Repo](https://github.com/google-gemini/gemini-cli)
 - **API Differences**: See docstrings in `types.py`
 

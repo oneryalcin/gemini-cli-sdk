@@ -134,7 +134,7 @@ class SubprocessCLITransport(Transport):
         
         # Set up environment
         env = os.environ.copy()
-        env["GEMINI_SDK"] = "gemini-code-sdk-python"
+        env["GEMINI_SDK"] = "gemini-cli-sdk-python"
         
         # Handle working directory
         cwd = str(options.cwd) if options.cwd else None

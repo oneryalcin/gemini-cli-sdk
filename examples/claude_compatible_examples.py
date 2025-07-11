@@ -8,8 +8,8 @@ import anyio
 import os
 
 # These imports would normally be from claude_code_sdk
-# But we're using gemini_code_sdk with compatibility aliases
-from gemini_code_sdk import (
+# But we're using gemini_cli_sdk with compatibility aliases
+from gemini_cli_sdk import (
     AssistantMessage,
     ClaudeCodeOptions,  # Compatibility alias for GeminiOptions
     ResultMessage,
@@ -112,7 +112,7 @@ async def error_handling_example():
     print("=== Error Handling Example ===")
     
     # Import error types - these work with both SDKs
-    from gemini_code_sdk import (
+    from gemini_cli_sdk import (
         CLINotFoundError,
         ProcessError,
         ClaudeSDKError,  # Compatibility alias

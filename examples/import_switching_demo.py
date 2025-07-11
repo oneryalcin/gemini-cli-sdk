@@ -26,7 +26,7 @@ async def run_with_sdk(sdk_name: str):
             )
         else:
             # Import from Gemini SDK (with compatibility aliases)
-            from gemini_code_sdk import (
+            from gemini_cli_sdk import (
                 query,
                 ClaudeCodeOptions as Options,  # Using Claude alias!
                 AssistantMessage,
@@ -100,10 +100,10 @@ Option 1 - Update imports:
     from claude_code_sdk import query, ClaudeCodeOptions
     
     # After
-    from gemini_code_sdk import query, GeminiOptions
+    from gemini_cli_sdk import query, GeminiOptions
 
 Option 2 - Use compatibility aliases (no code changes!):
-    from gemini_code_sdk import query, ClaudeCodeOptions
+    from gemini_cli_sdk import query, ClaudeCodeOptions
     
 That's it! Your existing code continues to work!
 """)
