@@ -84,6 +84,44 @@ As Gemini CLI doesn't yet support structured JSON output, this SDK uses Gemini's
 - ❌ Session management (not exposed by Gemini CLI)
 - ❌ Cost tracking (no data available)
 
+## Why These Limitations?
+
+The limitations of this SDK stem from the current architecture of Gemini CLI, not from the SDK design. We're actively monitoring Gemini CLI's development and will add features as they become available.
+
+### Tracking CLI Development
+
+**Structured Output & JSON Format**
+- 🚧 [Issue #3674](https://github.com/google-gemini/gemini-cli/issues/3674): JSON output format for non-interactive mode (Priority P1)
+- 🚧 [Issue #2023](https://github.com/google-gemini/gemini-cli/issues/2023): TypeScript SDK and structured output support (Priority P2)  
+- 🔨 [PR #3699](https://github.com/google-gemini/gemini-cli/pull/3699): Partial JSON logging implementation (In Progress)
+
+**Session Management**
+- 🚧 [Issue #2222](https://github.com/google-gemini/gemini-cli/issues/2222): Resume conversation support (`--resume` flag)
+- 🚧 [Issue #2384](https://github.com/google-gemini/gemini-cli/issues/2384): Session selection in non-interactive mode
+
+**Tool Use Protocol**
+- Currently, Gemini CLI doesn't expose a structured tool use protocol in its output
+- Tool execution results are mixed with LLM responses in plain text
+- No way to distinguish between tool calls and regular text responses
+
+### What This Means
+
+Until these CLI features land:
+- We use Gemini's structured output to parse plain text (adds ~50-200ms latency)
+- No session persistence between queries
+- No detailed tool execution tracking
+- Limited metadata (no token counts, costs, or timing)
+
+### Future Roadmap
+
+Once Gemini CLI implements JSON output (PR #3699 shows active work):
+1. We'll switch from LLM parsing to native JSON parsing
+2. Session management will be added when CLI exposes it
+3. Tool use tracking will be implemented if/when available
+4. Performance will improve significantly (no parsing overhead)
+
+The SDK is designed to seamlessly adopt these features without breaking changes to your code.
+
 ## Environment Variables
 
 - `GEMINI_API_KEY` or `GOOGLE_API_KEY`: Your Gemini API key
@@ -119,7 +157,7 @@ async for message in query(prompt="Explain Python", options=options):
 ## How It Works
 
 1. **Subprocess Execution**: Runs Gemini CLI as a subprocess
-2. **LLM Parsing**: Uses Instructor + OpenAI to parse plain text output into structured messages
+2. **Structured Parsing**: Uses Gemini's native structured output to parse plain text into structured messages
 3. **Type Safety**: Provides Pydantic models compatible with Claude SDK
 
 When Gemini CLI adds native JSON output support, the SDK will automatically switch to use it without requiring code changes.
