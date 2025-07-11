@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Gemini SDK Contributors"},
+    {name = "Oner Yalcin", email = "oneryalcin@gmail.com"},
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -43,9 +43,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python"
-Documentation = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python"
-Issues = "https://github.com/gemini-cli-sdk/gemini-cli-sdk-python/issues"
+Homepage = "https://github.com/oneryalcin/gemini-cli-sdk"
+Documentation = "https://github.com/oneryalcin/gemini-cli-sdk"
+Issues = "https://github.com/oneryalcin/gemini-cli-sdk/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/gemini_cli_sdk"]

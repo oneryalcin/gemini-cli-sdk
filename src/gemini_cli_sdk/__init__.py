@@ -4,33 +4,33 @@ import os
 from collections.abc import AsyncIterator
 
 from ._errors import (
-    GeminiSDKError,
+    # Compatibility aliases
+    ClaudeSDKError,
     CLIConnectionError,
     CLIJSONDecodeError,
     CLINotFoundError,
-    ProcessError,
-    ParsingError,
     ConfigurationError,
-    # Compatibility aliases
-    ClaudeSDKError,
+    GeminiSDKError,
+    ParsingError,
+    ProcessError,
 )
 from ._internal.client import InternalClient
 from .types import (
     # Main types
     AssistantMessage,
-    GeminiOptions,
+    # Compatibility alias
+    ClaudeCodeOptions,
+    CodeBlock,
     ContentBlock,
+    GeminiOptions,
     Message,
     PermissionMode,
     ResultMessage,
     SystemMessage,
     TextBlock,
-    CodeBlock,
     ToolResultBlock,
     ToolUseBlock,
     UserMessage,
-    # Compatibility alias
-    ClaudeCodeOptions,
 )
 
 __version__ = "0.1.0"
@@ -101,12 +101,12 @@ async def query(
         ):
             print(message)
         ```
-    
+
     Note:
         This SDK uses LLM-based parsing to convert Gemini's plain text output
         into structured messages. This adds some latency and requires an
         OpenAI API key to be set in the OPENAI_API_KEY environment variable.
-        
+
         When Gemini CLI adds native JSON output support, this SDK will
         automatically switch to use it without requiring code changes.
     """
