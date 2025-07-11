@@ -126,7 +126,8 @@ The SDK is designed to seamlessly adopt these features without breaking changes 
 
 - `GEMINI_API_KEY` or `GOOGLE_API_KEY`: Your Gemini API key
 - `GEMINI_MODEL`: Default model for CLI (default: `gemini-2.0-flash`)
-- `GEMINI_PARSER_MODEL`: Model for parsing output (default: `gemini-2.5-flash-lite-preview-06-17`)
+- `GEMINI_PARSER_MODEL`: Model for parsing output (default: `gemini-2.0-flash`)
+- `GEMINI_SDK_DEBUG`: Enable debug logging (set to DEBUG, INFO, WARNING, ERROR, or CRITICAL)
 
 ## Examples
 

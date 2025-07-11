@@ -1,7 +1,16 @@
 """Gemini SDK for Python - Compatible with Claude Code SDK."""
 
 import os
+import logging
 from collections.abc import AsyncIterator
+
+# Configure logging based on environment variable
+_log_level = os.getenv("GEMINI_SDK_DEBUG", "").upper()
+if _log_level in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
+    logging.basicConfig(
+        level=getattr(logging, _log_level),
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 from ._errors import (
     # Compatibility aliases
