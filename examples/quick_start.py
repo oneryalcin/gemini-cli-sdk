@@ -110,14 +110,6 @@ async def main():
     print()
 
     # Check for required environment variables
-    if not os.getenv("OPENAI_API_KEY"):
-        print("⚠️  Warning: OPENAI_API_KEY not set.")
-        print("   The SDK uses OpenAI for parsing Gemini output.")
-        print("   Set your OpenAI API key:")
-        print("   export OPENAI_API_KEY='your-key-here'")
-        print()
-        return
-
     if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
         print("⚠️  Warning: GEMINI_API_KEY or GOOGLE_API_KEY not set.")
         print("   Set your Gemini API key:")

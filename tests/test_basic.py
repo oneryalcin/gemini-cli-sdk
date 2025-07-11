@@ -102,8 +102,8 @@ def test_error_hierarchy():
     assert "Test error: /usr/bin/gemini" in str(err)
 
     # Test configuration error
-    config_err = ConfigurationError("Missing API key", missing_key="OPENAI_API_KEY")
-    assert "Missing OPENAI_API_KEY" in str(config_err)
+    config_err = ConfigurationError("Missing API key", missing_key="GEMINI_API_KEY")
+    assert "Missing GEMINI_API_KEY" in str(config_err)
 
 
 def test_compatibility_imports():

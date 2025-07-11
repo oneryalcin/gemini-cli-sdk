@@ -1,4 +1,4 @@
-"""LLM-based parser for Gemini CLI output using Instructor."""
+"""LLM-based parser for Gemini CLI output using Gemini's native structured output."""
 
 import logging
 import os
@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 from typing import Literal
 
-import instructor
-from openai import OpenAI
+from google import genai
+from google.genai.types import GenerateContentConfig
 from pydantic import BaseModel, Field
 
 from ..._errors import ConfigurationError, ParsingError
@@ -43,23 +43,24 @@ class ParsedResponse(BaseModel):
 
 
 class LLMParser(ParserStrategy):
-    """Parser that uses LLM to extract structured data from plain text."""
+    """Parser that uses Gemini to extract structured data from plain text."""
 
-    def __init__(self, model: str = "gpt-4o-mini"):
+    def __init__(self, model: str = "gemini-2.5-flash-lite-preview-06-17"):
         """
-        Initialize LLM parser.
+        Initialize LLM parser using Gemini.
 
         Args:
-            model: OpenAI model to use for parsing
+            model: Gemini model to use for parsing
         """
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise ConfigurationError(
-                "OpenAI API key required for LLM parsing", missing_key="OPENAI_API_KEY"
+                "Gemini API key required for parsing",
+                missing_key="GEMINI_API_KEY or GOOGLE_API_KEY"
             )
 
         self.model = os.getenv("GEMINI_PARSER_MODEL", model)
-        self.client = instructor.from_openai(OpenAI(api_key=api_key))
+        self.client = genai.Client(api_key=api_key)
 
         # Cache for simple responses
         self._simple_cache = {
@@ -68,7 +69,7 @@ class LLMParser(ParserStrategy):
 
     async def parse(self, raw_output: str, stderr: str = "") -> list[Message]:
         """
-        Parse Gemini output using LLM.
+        Parse Gemini output using Gemini's structured output.
 
         Args:
             raw_output: The stdout from Gemini CLI
@@ -100,7 +101,7 @@ class LLMParser(ParserStrategy):
             return messages
 
         try:
-            # Use LLM to parse the output
+            # Use Gemini to parse the output
             parsed = await self._parse_with_llm(cleaned_output, stderr)
 
             # Convert parsed response to SDK messages
@@ -110,79 +111,82 @@ class LLMParser(ParserStrategy):
                 if item.type == "text":
                     content_blocks.append(TextBlock(text=item.content))
                 elif item.type == "code":
-                    content_blocks.append(
-                        CodeBlock(
-                            code=item.content, language=item.language or "plaintext"
-                        )
-                    )
+                    content_blocks.append(CodeBlock(
+                        code=item.content,
+                        language=item.language or "plaintext"
+                    ))
                 elif item.type == "error":
                     # For errors, we'll add as text with error prefix
-                    content_blocks.append(TextBlock(text=f"Error: {item.content}"))
+                    content_blocks.append(TextBlock(
+                        text=f"Error: {item.content}"
+                    ))
 
             if content_blocks:
                 messages.append(AssistantMessage(content=content_blocks))
 
             # Add result message with basic metadata
-            messages.append(
-                ResultMessage(
-                    subtype="success" if not parsed.has_error else "error",
-                    duration_ms=100,  # Placeholder
-                    is_error=parsed.has_error,
-                    session_id=self._generate_session_id(),
-                    num_turns=1,
-                    result=parsed.summary if not parsed.has_error else None,
-                )
-            )
+            messages.append(ResultMessage(
+                subtype="success" if not parsed.has_error else "error",
+                duration_ms=100,  # Placeholder
+                is_error=parsed.has_error,
+                session_id=self._generate_session_id(),
+                num_turns=1,
+                result=parsed.summary if not parsed.has_error else None
+            ))
 
         except Exception as e:
             logger.error(f"LLM parsing failed: {e}")
             # Fallback: treat entire output as text
-            messages.append(AssistantMessage(content=[TextBlock(text=cleaned_output)]))
-            messages.append(
-                ResultMessage(
-                    subtype="parsing_fallback",
-                    duration_ms=100,
-                    is_error=False,
-                    session_id=self._generate_session_id(),
-                    num_turns=1,
-                )
-            )
+            messages.append(AssistantMessage(
+                content=[TextBlock(text=cleaned_output)]
+            ))
+            messages.append(ResultMessage(
+                subtype="parsing_fallback",
+                duration_ms=100,
+                is_error=False,
+                session_id=self._generate_session_id(),
+                num_turns=1
+            ))
 
         return messages
 
     async def _parse_with_llm(self, output: str, stderr: str) -> ParsedResponse:
-        """Use LLM to parse the output into structured format."""
+        """Use Gemini to parse the output into structured format."""
 
-        system_prompt = """You are a parser for Gemini CLI output. 
+        system_prompt = """You are a parser for Gemini CLI output.
         Extract structured information from the CLI output.
-        
+
         Identify:
         1. Plain text responses
         2. Code blocks (with language if specified) - look for ``` markers
         3. Error messages or warnings
         4. Multiple content sections if present
-        
+
         Be precise and preserve the exact content."""
 
-        user_prompt = f"Parse this Gemini CLI output:\n\n{output}"
+        prompt = f"{system_prompt}\n\nParse this Gemini CLI output:\n\n{output}"
         if stderr:
-            user_prompt += f"\n\nStderr output:\n{stderr}"
+            prompt += f"\n\nStderr output:\n{stderr}"
 
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.aio.models.generate_content(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                response_model=ParsedResponse,
-                max_retries=2,
+                contents=prompt,
+                config=GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=ParsedResponse,
+                )
             )
-            return response
+            
+            # response.parsed already returns the parsed Pydantic object
+            return response.parsed
+            
         except Exception as e:
             raise ParsingError(
-                "LLM parsing failed", raw_output=output, original_error=e
-            )
+                "Gemini parsing failed",
+                raw_output=output,
+                original_error=e
+            ) from e
 
     def _clean_output(self, output: str) -> str:
         """Remove common Gemini CLI artifacts from output."""
@@ -196,10 +200,10 @@ class LLMParser(ParserStrategy):
             "I'm currently working in the directory:",
             "Showing up to",
             "This is the Gemini CLI",
-            "We are setting up the context",
+            "We are setting up the context"
         ]
 
-        lines = output.strip().split("\n")
+        lines = output.strip().split('\n')
         cleaned_lines = []
 
         for line in lines:
@@ -208,19 +212,16 @@ class LLMParser(ParserStrategy):
                 continue
             cleaned_lines.append(line)
 
-        return "\n".join(cleaned_lines).strip()
+        return '\n'.join(cleaned_lines).strip()
 
     def _is_simple_response(self, text: str) -> bool:
         """Check if response is simple enough to not need LLM parsing."""
         # Single line, no code blocks, under 100 chars
-        if "\n" not in text and "```" not in text and len(text) < 100:
+        if '\n' not in text and '```' not in text and len(text) < 100:
             return True
 
         # Just a number or simple calculation result
-        if re.match(r"^[\d\s\+\-\*\/\=\.\,]+$", text.strip()):
-            return True
-
-        return False
+        return bool(re.match(r'^[\d\s\+\-\*\/\=\.\,]+$', text.strip()))
 
     def _generate_session_id(self) -> str:
         """Generate a simple session ID."""

@@ -73,12 +73,9 @@ async def main():
     # Check environment
     has_anthropic = os.getenv("ANTHROPIC_API_KEY") is not None
     has_gemini = os.getenv("GEMINI_API_KEY") is not None
-    has_openai = os.getenv("OPENAI_API_KEY") is not None
-
     print("\nEnvironment:")
     print(f"- ANTHROPIC_API_KEY: {'✓' if has_anthropic else '✗'}")
     print(f"- GEMINI_API_KEY: {'✓' if has_gemini else '✗'}")
-    print(f"- OPENAI_API_KEY: {'✓' if has_openai else '✗'}")
 
     # Try with Claude SDK (will fail without Claude CLI)
     if has_anthropic:
@@ -87,10 +84,10 @@ async def main():
         print("\n⚠️  Skipping Claude SDK (ANTHROPIC_API_KEY not set)")
 
     # Try with Gemini SDK
-    if has_gemini and has_openai:
+    if has_gemini:
         await run_with_sdk("Gemini SDK")
     else:
-        print("\n⚠️  Skipping Gemini SDK (requires GEMINI_API_KEY and OPENAI_API_KEY)")
+        print("\n⚠️  Skipping Gemini SDK (requires GEMINI_API_KEY)")
 
     print("\n" + "=" * 70)
     print("MIGRATION SUMMARY")
