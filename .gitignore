@@ -150,4 +150,8 @@ uv.lock
 .DS_Store
 
 # Testing
-.ruff_cache/trash/
+.ruff_cache/
+trash/
+
+# Documentation
+PUBLISHING.md
