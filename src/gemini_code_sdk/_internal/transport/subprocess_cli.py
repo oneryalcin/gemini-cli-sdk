@@ -161,12 +161,7 @@ class SubprocessCLITransport(Transport):
             # Read stdout
             if self._process.stdout:
                 try:
-                    stdout_data = await self._process.stdout.receive()
-                    # Continue reading until EOF
-                    while True:
-                        chunk = await self._process.stdout.receive()
-                        if not chunk:
-                            break
+                    async for chunk in self._process.stdout:
                         stdout_data += chunk
                 except anyio.EndOfStream:
                     pass
@@ -174,11 +169,7 @@ class SubprocessCLITransport(Transport):
             # Read stderr
             if self._process.stderr:
                 try:
-                    stderr_data = await self._process.stderr.receive()
-                    while True:
-                        chunk = await self._process.stderr.receive()
-                        if not chunk:
-                            break
+                    async for chunk in self._process.stderr:
                         stderr_data += chunk
                 except anyio.EndOfStream:
                     pass
@@ -189,6 +180,15 @@ class SubprocessCLITransport(Transport):
             # Decode output
             stdout = stdout_data.decode('utf-8', errors='replace')
             stderr = stderr_data.decode('utf-8', errors='replace')
+            
+            # Debug logging
+            logger.debug(f"Process completed with return code: {returncode}")
+            logger.debug(f"Stdout length: {len(stdout)}")
+            logger.debug(f"Stderr length: {len(stderr)}")
+            if stdout:
+                logger.debug(f"Stdout preview: {stdout[:200]}...")
+            if stderr:
+                logger.debug(f"Stderr preview: {stderr[:200]}...")
             
             # Check for errors
             if returncode != 0:

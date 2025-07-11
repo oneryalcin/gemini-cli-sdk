@@ -94,6 +94,15 @@ class InternalClient:
                 
         except Exception as e:
             logger.error(f"Query processing failed: {e}")
+            # Emit error message before re-raising
+            yield ResultMessage(
+                subtype="error_during_execution",
+                duration_ms=0,
+                is_error=True,
+                session_id="error",
+                num_turns=0,
+                result=str(e)
+            )
             raise
         finally:
             # Ensure transport is disconnected

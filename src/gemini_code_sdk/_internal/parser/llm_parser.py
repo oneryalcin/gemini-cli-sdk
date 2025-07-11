@@ -99,8 +99,8 @@ class LLMParser(ParserStrategy):
             if cached:
                 return cached.copy()
         
-        # Handle empty or very short responses
-        if not cleaned_output or len(cleaned_output.strip()) < 3:
+        # Handle empty responses
+        if not cleaned_output or not cleaned_output.strip():
             return messages
         
         # Quick check for simple numeric/single word responses
