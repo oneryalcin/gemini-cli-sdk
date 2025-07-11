@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
 This is the EXACT Claude SDK quick_start.py example with only ONE change:
-- Import statement changed from claude_code_sdk to gemini_code_sdk
+- Import statement changed from claude_code_sdk to gemini_cli_sdk
 
 Everything else is EXACTLY the same to demonstrate compatibility.
 """
 
 import anyio
 
-# ONLY CHANGE: Import from gemini_code_sdk instead of claude_code_sdk
-from gemini_code_sdk import (
+# ONLY CHANGE: Import from gemini_cli_sdk instead of claude_code_sdk
+from gemini_cli_sdk import (
     AssistantMessage,
     ClaudeCodeOptions,  # Using Claude's name!
     ResultMessage,

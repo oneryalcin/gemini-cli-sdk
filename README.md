@@ -1,4 +1,4 @@
-# Gemini Code SDK for Python
+# Gemini CLI SDK for Python
 
 > ⚠️ **EXPERIMENTAL**: This SDK is in early development and uses LLM-based parsing as a temporary solution. The API may change as Gemini CLI evolves.
 
@@ -7,7 +7,7 @@ Python SDK for [Gemini CLI](https://github.com/google-gemini/gemini-cli), provid
 ## Installation
 
 ```bash
-pip install gemini-code-sdk
+pip install gemini-cli-sdk
 ```
 
 **Prerequisites:**
@@ -19,7 +19,7 @@ pip install gemini-code-sdk
 
 ```python
 import anyio
-from gemini_code_sdk import query
+from gemini_cli_sdk import query
 
 async def main():
     async for message in query(prompt="What is 2 + 2?"):
@@ -38,19 +38,19 @@ This SDK is designed to be API-compatible with Claude Code SDK. In most cases, y
 from claude_code_sdk import query, ClaudeCodeOptions
 
 # After  
-from gemini_code_sdk import query, GeminiOptions
+from gemini_cli_sdk import query, GeminiOptions
 ```
 
 ### Option 2: Use compatibility aliases (zero code changes!)
 ```python
 # This works with Gemini SDK!
-from gemini_code_sdk import query, ClaudeCodeOptions
+from gemini_cli_sdk import query, ClaudeCodeOptions
 ```
 
 ### Complete example
 ```python
 # This Claude SDK code works unchanged with Gemini SDK
-from gemini_code_sdk import (
+from gemini_cli_sdk import (
     query,
     ClaudeCodeOptions,  # Compatibility alias
     AssistantMessage,
@@ -95,7 +95,7 @@ As Gemini CLI doesn't yet support structured JSON output, this SDK uses LLM-base
 ### Basic Query
 
 ```python
-from gemini_code_sdk import query, GeminiOptions, AssistantMessage, TextBlock
+from gemini_cli_sdk import query, GeminiOptions, AssistantMessage, TextBlock
 
 async for message in query(prompt="Hello Gemini"):
     if isinstance(message, AssistantMessage):

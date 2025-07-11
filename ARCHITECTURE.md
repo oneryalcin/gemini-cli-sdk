@@ -1,14 +1,14 @@
-# Gemini Code SDK Architecture
+# Gemini CLI SDK Architecture
 
 ## Overview
 
-The Gemini Code SDK provides a Python interface to Gemini CLI that's API-compatible with Claude Code SDK. It uses LLM-based parsing to convert Gemini's plain text output into structured messages.
+The Gemini CLI SDK provides a Python interface to Gemini CLI that's API-compatible with Claude Code SDK. It uses LLM-based parsing to convert Gemini's plain text output into structured messages.
 
 ## Directory Structure
 
 ```
-gemini-code-sdk/
-├── src/gemini_code_sdk/
+gemini-cli-sdk/
+├── src/gemini_cli_sdk/
 │   ├── __init__.py              # Public API (query function)
 │   ├── types.py                 # Type definitions (Message, Options, etc.)
 │   ├── _errors.py               # Error hierarchy

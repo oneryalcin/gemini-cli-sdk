@@ -4,7 +4,7 @@ import pytest
 import anyio
 from unittest.mock import Mock, AsyncMock, patch
 
-from gemini_code_sdk import (
+from gemini_cli_sdk import (
     query,
     GeminiOptions,
     AssistantMessage,
@@ -19,7 +19,7 @@ from gemini_code_sdk import (
 async def test_query_basic():
     """Test basic query functionality with mocked transport."""
     # Mock the subprocess transport
-    with patch("gemini_code_sdk._internal.client.SubprocessCLITransport") as MockTransport:
+    with patch("gemini_cli_sdk._internal.client.SubprocessCLITransport") as MockTransport:
         # Set up mock
         mock_transport = Mock()
         mock_transport.connect = AsyncMock()
@@ -28,7 +28,7 @@ async def test_query_basic():
         MockTransport.return_value = mock_transport
         
         # Mock the LLM parser to return simple response
-        with patch("gemini_code_sdk._internal.client.LLMParser") as MockParser:
+        with patch("gemini_cli_sdk._internal.client.LLMParser") as MockParser:
             mock_parser = Mock()
             mock_parser.parse = AsyncMock(return_value=[
                 AssistantMessage(content=[TextBlock(text="42")])
@@ -52,14 +52,14 @@ async def test_query_basic():
 @pytest.mark.asyncio
 async def test_query_with_options():
     """Test query with custom options."""
-    with patch("gemini_code_sdk._internal.client.SubprocessCLITransport") as MockTransport:
+    with patch("gemini_cli_sdk._internal.client.SubprocessCLITransport") as MockTransport:
         mock_transport = Mock()
         mock_transport.connect = AsyncMock()
         mock_transport.disconnect = AsyncMock()
         mock_transport.execute = AsyncMock(return_value=("Hello from Gemini", ""))
         MockTransport.return_value = mock_transport
         
-        with patch("gemini_code_sdk._internal.client.LLMParser") as MockParser:
+        with patch("gemini_cli_sdk._internal.client.LLMParser") as MockParser:
             mock_parser = Mock()
             mock_parser.parse = AsyncMock(return_value=[
                 AssistantMessage(content=[TextBlock(text="Hello from Gemini")])
@@ -101,11 +101,11 @@ def test_error_hierarchy():
 
 def test_compatibility_imports():
     """Test that compatibility aliases work."""
-    from gemini_code_sdk import ClaudeCodeOptions, ClaudeSDKError
+    from gemini_cli_sdk import ClaudeCodeOptions, ClaudeSDKError
     
     # These should be aliases
     assert ClaudeCodeOptions is GeminiOptions
     
     # Error alias
-    from gemini_code_sdk import GeminiSDKError
+    from gemini_cli_sdk import GeminiSDKError
     assert ClaudeSDKError is GeminiSDKError
