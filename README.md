@@ -91,6 +91,8 @@ See [MIGRATION.md](MIGRATION.md) for detailed migration guide.
 **❌ Not Yet Supported**
 - Tool use blocks tracking
 - Session resume in non-interactive mode
+- Subagents and task delegation ([#12](https://github.com/oneryalcin/gemini-cli-sdk/issues/12))
+- Hooks for tool lifecycle events ([#13](https://github.com/oneryalcin/gemini-cli-sdk/issues/13))
 
 ## Development Status
 
@@ -120,6 +122,21 @@ Gemini CLI has made significant progress:
 2. Add session history retrieval ([#10](https://github.com/oneryalcin/gemini-cli-sdk/issues/10))
 3. Implement token/cost tracking with real data
 4. Wait for upstream session resume support ([#11](https://github.com/oneryalcin/gemini-cli-sdk/issues/11))
+
+## Claude Code Compatibility
+
+This SDK aims for API compatibility with [Claude Code SDK](https://github.com/anthropics/claude-code-sdk-python). See [#13](https://github.com/oneryalcin/gemini-cli-sdk/issues/13) for a detailed feature comparison.
+
+### Feature Parity Status
+
+| Feature | Claude Code | Gemini CLI | Status |
+|---------|-------------|------------|--------|
+| **Subagents** | ✅ `.claude/agents/` | ❌ Not available | [#12](https://github.com/oneryalcin/gemini-cli-sdk/issues/12) |
+| **Hooks** | ✅ Tool lifecycle events | ❌ Feature request | [#13](https://github.com/oneryalcin/gemini-cli-sdk/issues/13) |
+| **Slash Commands** | ✅ Markdown files | ✅ TOML files | ✅ Compatible |
+| **Memory/Context** | ✅ `CLAUDE.md` | ✅ `GEMINI.md` | ✅ Compatible |
+
+**Note:** Gemini CLI uses `.gemini/` directory and `GEMINI.md` files instead of `.claude/` and `CLAUDE.md`, with similar functionality and enhanced hierarchical loading.
 
 ## Environment Variables
 
