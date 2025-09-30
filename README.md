@@ -1,6 +1,8 @@
 # Gemini CLI SDK for Python
 
-> ⚠️ **EXPERIMENTAL**: This SDK is in early development and uses Gemini's structured output for parsing. The API may change as Gemini CLI evolves.
+> ⚠️ **EXPERIMENTAL**: This SDK is in early development. The API may change as Gemini CLI evolves.
+>
+> 🎉 **UPDATE (v0.6.1+)**: Gemini CLI now supports JSON output and session recording! See [#9](https://github.com/oneryalcin/gemini-cli-sdk/issues/9) and [#10](https://github.com/oneryalcin/gemini-cli-sdk/issues/10) for details.
 
 Python SDK for [Gemini CLI](https://github.com/google-gemini/gemini-cli), providing programmatic access to Gemini with an API compatible with [Claude Code SDK](https://github.com/anthropics/claude-code-sdk-python).
 
@@ -71,56 +73,53 @@ async for message in query(prompt="Hello", options=options):
 
 See [MIGRATION.md](MIGRATION.md) for detailed migration guide.
 
-## Current Limitations
+## Current Status & Limitations
 
-As Gemini CLI doesn't yet support structured JSON output, this SDK uses Gemini's structured output for parsing:
+**✅ Recently Unblocked (Gemini CLI v0.6.1+)**
+- Native JSON output format available ([#9](https://github.com/oneryalcin/gemini-cli-sdk/issues/9))
+- Automatic session recording to disk ([#10](https://github.com/oneryalcin/gemini-cli-sdk/issues/10))
+- Token usage and cost tracking data
+- API latency metrics
 
-- ✅ Structured message types (compatible with Claude SDK)
-- ✅ Async iteration pattern
-- ✅ Basic error handling
-- ⚠️ Additional latency from parsing (~50-200ms)
-- ⚠️ Uses same Gemini API key for both CLI and parsing
-- ❌ Tool use blocks (not yet supported)
-- ❌ Session management (not exposed by Gemini CLI)
-- ❌ Cost tracking (no data available)
+**⚠️ Temporary (Migration in Progress)**
+- SDK still uses LLM parsing (adds ~50-200ms latency)
+- Migration to native JSON parsing planned
 
-## Why These Limitations?
+**⚠️ Partially Available**
+- Session files recorded but no `--resume` flag yet ([#11](https://github.com/oneryalcin/gemini-cli-sdk/issues/11))
 
-The limitations of this SDK stem from the current architecture of Gemini CLI, not from the SDK design. We're actively monitoring Gemini CLI's development and will add features as they become available.
+**❌ Not Yet Supported**
+- Tool use blocks tracking
+- Session resume in non-interactive mode
 
-### Tracking CLI Development
+## Development Status
 
-**Structured Output & JSON Format**
-- 🚧 [Issue #3674](https://github.com/google-gemini/gemini-cli/issues/3674): JSON output format for non-interactive mode (Priority P1)
-- 🚧 [Issue #2023](https://github.com/google-gemini/gemini-cli/issues/2023): TypeScript SDK and structured output support (Priority P2)  
-- 🔨 [PR #3699](https://github.com/google-gemini/gemini-cli/pull/3699): Partial JSON logging implementation (In Progress)
+### Recent Improvements (v0.6.1)
 
-**Session Management**
-- 🚧 [Issue #2222](https://github.com/google-gemini/gemini-cli/issues/2222): Resume conversation support (`--resume` flag)
-- 🚧 [Issue #2384](https://github.com/google-gemini/gemini-cli/issues/2384): Session selection in non-interactive mode
+Gemini CLI has made significant progress:
 
-**Tool Use Protocol**
-- Currently, Gemini CLI doesn't expose a structured tool use protocol in its output
-- Tool execution results are mixed with LLM responses in plain text
-- No way to distinguish between tool calls and regular text responses
+**✅ JSON Output** - [Issue #9](https://github.com/oneryalcin/gemini-cli-sdk/issues/9)
+- Native `--output-format json` flag
+- Structured response data with token usage
+- API latency and tool execution metrics
+- Eliminates need for LLM-based parsing
 
-### What This Means
+**✅ Session Recording** - [Issue #10](https://github.com/oneryalcin/gemini-cli-sdk/issues/10)
+- Automatic conversation history to disk
+- Full message history with timestamps
+- Token usage per message
+- Session IDs for tracking
 
-Until these CLI features land:
-- We use Gemini's structured output to parse plain text (adds ~50-200ms latency)
-- No session persistence between queries
-- No detailed tool execution tracking
-- Limited metadata (no token counts, costs, or timing)
+**⚠️ Session Resume** - [Issue #11](https://github.com/oneryalcin/gemini-cli-sdk/issues/11)
+- Recording works, but no `--resume` flag yet
+- Upstream [Issue #1530](https://github.com/google-gemini/gemini-cli/issues/1530) tracked (Priority P2)
 
-### Future Roadmap
+### Next Steps for This SDK
 
-Once Gemini CLI implements JSON output (PR #3699 shows active work):
-1. We'll switch from LLM parsing to native JSON parsing
-2. Session management will be added when CLI exposes it
-3. Tool use tracking will be implemented if/when available
-4. Performance will improve significantly (no parsing overhead)
-
-The SDK is designed to seamlessly adopt these features without breaking changes to your code.
+1. Migrate from LLM parsing to native JSON output ([#9](https://github.com/oneryalcin/gemini-cli-sdk/issues/9))
+2. Add session history retrieval ([#10](https://github.com/oneryalcin/gemini-cli-sdk/issues/10))
+3. Implement token/cost tracking with real data
+4. Wait for upstream session resume support ([#11](https://github.com/oneryalcin/gemini-cli-sdk/issues/11))
 
 ## Environment Variables
 
@@ -151,10 +150,12 @@ async for message in query(prompt="Hello Gemini"):
 ## How It Works
 
 1. **Subprocess Execution**: Runs Gemini CLI as a subprocess
-2. **Structured Parsing**: Uses Gemini's native structured output to parse plain text into structured messages
+2. **Structured Parsing**: Currently uses Gemini's structured output to parse responses (migration to native JSON planned - see [#9](https://github.com/oneryalcin/gemini-cli-sdk/issues/9))
 3. **Type Safety**: Provides Pydantic models compatible with Claude SDK
 
-When Gemini CLI adds native JSON output support, the SDK will automatically switch to use it without requiring code changes.
+### Migration to Native JSON (Coming Soon)
+
+Gemini CLI v0.6.1+ supports native JSON output. The SDK will be updated to use this instead of LLM-based parsing, eliminating the ~50-200ms latency overhead.
 
 ## Contributing
 
